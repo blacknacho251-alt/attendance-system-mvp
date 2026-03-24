@@ -8,11 +8,11 @@ const Dashboard = () => {
   const [elapsedTime, setElapsedTime] = useState(0); // in seconds
   const [isLoading, setIsLoading] = useState(false);
   const [recentActivity, setRecentActivity] = useState([
-    { id: 1, type: 'Check-in', time: '09:00 AM', date: 'Oct 24, 2023', status: 'Success' },
-    { id: 2, type: 'Check-out', time: '05:30 PM', date: 'Oct 23, 2023', status: 'Success' },
-    { id: 3, type: 'Check-in', time: '08:55 AM', date: 'Oct 23, 2023', status: 'Success' },
-    { id: 4, type: 'Check-out', time: '06:10 PM', date: 'Oct 22, 2023', status: 'Success' },
-    { id: 5, type: 'Check-in', time: '09:05 AM', date: 'Oct 22, 2023', status: 'Success' },
+    { id: 1, name: 'Alice Johnson', type: 'Check In', time: '08:55 AM', status: 'Success', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' },
+    { id: 2, name: 'Nara Smith', type: 'Check In', time: '08:56 AM', status: 'Success', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' },
+    { id: 3, name: 'Karo Sande', type: 'Check In', time: '08:26 AM', status: 'Success', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' },
+    { id: 4, name: 'John Smith', type: 'Check In', time: '07:43 AM', status: 'Late', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' },
+    { id: 5, name: 'Ram Jayns', type: 'Check In', time: '09:05 AM', status: 'Late', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop' },
   ]);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Dashboard = () => {
       const now = new Date();
       const currentIsCheckedIn = !isCheckedIn;
       setIsCheckedIn(currentIsCheckedIn);
-      setLastAction(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setLastAction(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
       
       if (currentIsCheckedIn) {
         setElapsedTime(0);
@@ -63,115 +63,113 @@ const Dashboard = () => {
 
       const newActivity = {
         id: Date.now(),
-        type: isCheckedIn ? 'Check-out' : 'Check-in',
+        name: 'John Doe',
+        type: isCheckedIn ? 'Check Out' : 'Check In',
         time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        status: status
+        status: status,
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop'
       };
       setRecentActivity([newActivity, ...recentActivity.slice(0, 4)]);
       setIsLoading(false);
     }, 500);
   };
 
-  const stats = [
-    { label: 'Current Status', value: isCheckedIn ? 'Checked In' : 'Checked Out', icon: Activity, color: isCheckedIn ? 'text-success' : 'text-danger' },
-    { label: 'Work Timer', value: formatElapsedTime(elapsedTime), icon: Timer, color: 'text-primary' },
-    { label: 'Monthly Total', value: '140 hrs', icon: CalendarCheck, color: 'text-text-primary' },
-  ];
-
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Clock Display */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="flex flex-col items-center justify-center p-8 bg-surface rounded-3xl border border-slate-100 shadow-sm">
-          <h2 className="text-text-secondary font-medium mb-2 uppercase tracking-wider text-xs">Current Time</h2>
-          <div className="text-6xl font-bold text-text-primary tracking-tighter tabular-nums font-mono">
-            {currentTime.toLocaleTimeString([], { hour12: false })}
-          </div>
-          <p className="text-xs text-text-secondary mt-4 flex items-center gap-1 font-medium">
-            <MapPin size={12} className="text-success" /> Verified Location: HQ Office, Block A
-          </p>
+    <div className="flex flex-col items-center space-y-12 animate-in fade-in duration-700">
+      {/* Clock Section */}
+      <div className="flex flex-col items-center justify-center pt-8">
+        <div className="text-[120px] font-bold text-[#1E293B] tracking-tighter tabular-nums leading-none select-none drop-shadow-sm">
+          {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
         </div>
-
-        <div className="bg-surface rounded-3xl border border-slate-100 p-8 flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
-          {isCheckedIn && (
-            <div className="absolute top-0 left-0 w-full h-1 bg-success animate-pulse"></div>
-          )}
+        
+        {/* Glow Button Container */}
+        <div className="relative mt-12 group">
+          {/* Animated Background Rings */}
+          <div className={`absolute inset-0 scale-150 rounded-full blur-2xl transition-all duration-1000 ${isCheckedIn ? 'bg-danger/10' : 'bg-success/10 group-hover:bg-success/20 animate-pulse'}`}></div>
+          <div className={`absolute -inset-10 rounded-full opacity-20 border-2 transition-all duration-1000 ${isCheckedIn ? 'border-danger animate-ping' : 'border-success animate-ping'}`}></div>
+          <div className={`absolute -inset-6 rounded-full opacity-30 border transition-all duration-1000 ${isCheckedIn ? 'border-danger' : 'border-success animate-pulse'}`}></div>
+          
           <button
             onClick={handleToggleCheck}
             disabled={isLoading}
-            className={`group relative w-40 h-40 rounded-full flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-xl border-[12px] ${
+            className={`relative z-10 flex items-center gap-4 px-12 py-5 rounded-[40px] shadow-2xl transition-all active:scale-95 border-b-4 ${
               isLoading 
-                ? 'bg-slate-200 text-slate-400 border-slate-100'
+                ? 'bg-slate-200 text-slate-400 border-slate-300'
                 : isCheckedIn 
-                  ? 'bg-danger text-white border-danger/10 hover:bg-danger/90' 
-                  : 'bg-success text-white border-success/10 hover:bg-success/90 animate-pulse'
+                  ? 'bg-danger text-white border-danger/20 hover:bg-danger/90' 
+                  : 'bg-[#10B981] text-white border-[#059669] hover:bg-[#059669]'
             }`}
           >
             {isLoading ? (
               <Loader2 className="animate-spin" size={32} />
             ) : isCheckedIn ? (
-              <Square fill="currentColor" size={32} />
+              <Square fill="currentColor" size={28} className="drop-shadow" />
             ) : (
-              <Play fill="currentColor" size={32} />
+              <div className="bg-white/20 p-1.5 rounded-full">
+                <CalendarCheck size={28} className="text-white drop-shadow" />
+              </div>
             )}
-            <span className="font-bold text-lg">
-              {isLoading ? 'Processing' : isCheckedIn ? 'Check Out' : 'Check In'}
+            <span className="text-3xl font-bold tracking-tight">
+              {isLoading ? 'Wait...' : isCheckedIn ? 'Check Out' : 'Check In'}
             </span>
           </button>
-          <div className="mt-6 text-center">
-            <p className="text-sm font-bold text-text-primary">
-              {isCheckedIn ? 'Working Since ' + lastAction : 'Not Checked In'}
-            </p>
-            <p className="text-xs text-text-secondary mt-1">
-              {isCheckedIn ? 'Tap to end your shift' : 'Tap to start your shift'}
-            </p>
-          </div>
         </div>
       </div>
 
-      {/* Stats and Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 grid grid-cols-1 gap-4">
-          {stats.map((stat, i) => (
-            <div key={i} className="bg-surface p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
-              <div className="p-3 bg-slate-50 rounded-xl">
-                <stat.icon className={stat.color} size={24} />
-              </div>
-              <div>
-                <p className="text-xs text-text-secondary font-bold uppercase tracking-wider">{stat.label}</p>
-                <p className={`text-xl font-bold mt-0.5 ${stat.color}`}>{stat.value}</p>
-              </div>
-            </div>
-          ))}
+      {/* Activity Table */}
+      <div className="w-full bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+        <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
+          <h3 className="text-2xl font-bold text-slate-800">Today's Activity</h3>
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-400 bg-slate-50 px-4 py-2 rounded-full">
+            <Activity size={16} /> Live Tracking Active
+          </div>
         </div>
-
-        <div className="lg:col-span-2 bg-surface rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
-            <h3 className="font-bold text-lg text-text-primary">Attendance History</h3>
-            <button className="text-sm font-bold text-primary hover:underline">View All Logs</button>
-          </div>
-          <div className="divide-y divide-slate-50">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="px-8 py-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg ${activity.type === 'Check-in' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
-                    <Activity size={16} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-text-primary">{activity.type}</p>
-                    <p className="text-xs text-text-secondary font-medium">{activity.date}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-text-primary">{activity.time}</p>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${activity.status === 'Success' ? 'bg-success/10 text-success border-success/10' : 'bg-warning/10 text-warning border-warning/10'}`}>
-                    {activity.status}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-slate-50 bg-slate-50/20 text-slate-400 text-sm font-bold uppercase tracking-widest">
+                <th className="px-10 py-6">User Name</th>
+                <th className="px-10 py-6">Time</th>
+                <th className="px-10 py-6">Status</th>
+                <th className="px-10 py-6">Label</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {recentActivity.map((activity) => (
+                <tr key={activity.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <td className="px-10 py-6">
+                    <div className="flex items-center gap-5">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow ring-2 ring-white">
+                        <img src={activity.avatar} alt={activity.name} className="w-full h-full object-cover" />
+                      </div>
+                      <span className="font-bold text-slate-700 text-lg">{activity.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-10 py-6">
+                    <div className="flex items-center gap-2 text-slate-600 font-bold tabular-nums">
+                      <Clock size={16} className="text-slate-300" />
+                      {activity.time}
+                    </div>
+                  </td>
+                  <td className="px-10 py-6">
+                    <span className={`inline-flex items-center px-4 py-2 rounded-2xl text-sm font-black tracking-wide border ${
+                      activity.status === 'Success' 
+                        ? 'bg-[#D1FAE5] text-[#059669] border-[#A7F3D0]' 
+                        : 'bg-[#FEE2E2] text-[#DC2626] border-[#FECACA]'
+                    }`}>
+                      {activity.type}
+                    </span>
+                  </td>
+                  <td className="px-10 py-6">
+                    <span className="inline-flex items-center px-4 py-2 rounded-2xl text-sm font-black tracking-wide border bg-slate-100 text-slate-500 border-slate-200">
+                      Emerald
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
