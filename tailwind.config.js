@@ -10,6 +10,7 @@ export default {
         primary: "#2E5BFF",
         success: "#00D97E",
         danger: "#FF4D4D",
+        warning: "#F59E0B",
         background: "#F8FAFC",
         surface: "#FFFFFF",
         "text-primary": "#1E293B",

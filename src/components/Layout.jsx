@@ -1,27 +1,31 @@
 import React from 'react';
 import { LayoutDashboard, Calendar, BarChart, Settings, Bell, User } from 'lucide-react';
 
-const Layout = ({ children, activeTab, onTabChange }) => {
+const Layout = ({ children, activeTab, onTabChange, userRole, setUserRole }) => {
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { id: 'leave', icon: Calendar, label: 'Leave' },
     { id: 'reports', icon: BarChart, label: 'Reports' },
-    { id: 'admin', icon: Settings, label: 'Admin' },
+    { id: 'admin', icon: Settings, label: 'Admin', roles: ['Admin', 'HR Manager'] },
   ];
 
   return (
     <div className="flex h-screen bg-background font-sans">
       {/* Sidebar */}
       <aside className="w-[260px] bg-surface border-r border-slate-200 flex flex-col fixed h-full z-10">
-        <div className="p-6 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">A</div>
-          <span className="text-text-primary font-bold text-lg">Attendance</span>
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">A</div>
+            <span className="text-text-primary font-bold text-lg">Attendance</span>
+          </div>
         </div>
         
         <nav className="flex-1 p-4 space-y-2 mt-4">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+            const hasAccess = !item.roles || item.roles.includes(userRole);
+            
             return (
               <button
                 key={item.id}
@@ -29,23 +33,37 @@ const Layout = ({ children, activeTab, onTabChange }) => {
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive 
                     ? 'bg-primary text-white shadow-md shadow-primary/20' 
-                    : 'text-text-secondary hover:bg-slate-50 hover:text-text-primary'
+                    : !hasAccess
+                      ? 'text-slate-300 cursor-not-allowed'
+                      : 'text-text-secondary hover:bg-slate-50 hover:text-text-primary'
                 }`}
+                disabled={!hasAccess && !isActive}
               >
                 <Icon size={20} />
                 <span className="font-medium">{item.label}</span>
+                {!hasAccess && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-danger"></div>}
               </button>
             );
           })}
         </nav>
         
-        <div className="p-4 border-t border-slate-100 m-4 bg-slate-50 rounded-2xl flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center">
-            <User className="text-slate-600" size={20} />
-          </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-semibold text-text-primary truncate">John Doe</p>
-            <p className="text-xs text-text-secondary truncate">Employee</p>
+        <div className="p-4 border-t border-slate-100 m-4 bg-slate-50 rounded-2xl flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center">
+              <User className="text-slate-600" size={20} />
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-semibold text-text-primary truncate">John Doe</p>
+              <select 
+                value={userRole} 
+                onChange={(e) => setUserRole(e.target.value)}
+                className="text-[10px] font-bold text-text-secondary uppercase bg-transparent outline-none cursor-pointer hover:text-primary transition-colors"
+              >
+                <option value="Employee">Employee</option>
+                <option value="HR Manager">HR Manager</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
           </div>
         </div>
       </aside>

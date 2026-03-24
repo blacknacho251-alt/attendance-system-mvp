@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import LeaveManagement from './components/LeaveManagement';
+import AdminDashboard from './components/AdminDashboard';
+import ReportDashboard from './components/ReportDashboard';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [userRole, setUserRole] = useState('Employee');
 
   const renderContent = () => {
     switch (activeTab) {
@@ -13,33 +16,19 @@ function App() {
       case 'leave':
         return <LeaveManagement />;
       case 'reports':
-        return (
-          <div className="bg-surface p-12 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mb-6">
-              <span className="font-bold text-2xl">B</span>
-            </div>
-            <h2 className="text-xl font-bold text-text-primary mb-2">Reports & Analytics</h2>
-            <p className="text-text-secondary max-w-sm">Generating real-time insights for your attendance and leave patterns. Coming soon.</p>
-          </div>
-        );
+        return <ReportDashboard />;
       case 'admin':
-        return (
-          <div className="bg-surface p-12 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mb-6">
-              <span className="font-bold text-2xl">A</span>
-            </div>
-            <h2 className="text-xl font-bold text-text-primary mb-2">Admin Control Panel</h2>
-            <p className="text-text-secondary max-w-sm">Configure organization structure, manage users, and define shift policies. Restricted to administrators.</p>
-          </div>
-        );
+        return userRole === 'Admin' || userRole === 'HR Manager' ? <AdminDashboard /> : <div className="p-8 text-center text-danger font-bold">Access Denied: Only Admin/HR can access this page.</div>;
       default:
         return <Dashboard />;
     }
   };
 
   return (
-    <Layout activeTab={activeTab} onTabChange={setActiveTab}>
-      {renderContent()}
+    <Layout activeTab={activeTab} onTabChange={setActiveTab} userRole={userRole} setUserRole={setUserRole}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {renderContent()}
+      </div>
     </Layout>
   );
 }
